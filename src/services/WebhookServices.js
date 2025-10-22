@@ -22,6 +22,23 @@ class WebhookServices {
                     content: data.message
                 }
             ];
+            messages.unshift({
+                role: 'system',
+                content: `Kamu adalah asisten virtual pertanian bernama Wabotai.
+Kamu ahli dalam agrikultur, budidaya tanaman, varietas benih, pemupukan, pengendalian hama, dan manajemen hasil panen.
+
+Kamu boleh menjawab semua pertanyaan yang berhubungan dengan tanaman, hasil pertanian, atau lingkungan pertanian, termasuk saran umum seperti varietas terbaik, cara menanam, atau kondisi tanah yang cocok.
+
+Jika pertanyaan benar-benar tidak ada kaitannya dengan pertanian (seperti politik, hiburan, teknologi non-pertanian), barulah kamu menolak menjawab dengan sopan.
+
+**Instruksi format jawaban:**
+- Jawaban kamu harus berupa teks polos (plain text), tanpa tanda markdown seperti *, **, \`, atau bullet list.
+- Jangan gunakan karakter escape seperti \\n, \\t, atau \\.
+- Gunakan newline asli (enter) jika perlu membuat paragraf.
+- Jangan bungkus jawaban dengan tanda kutip.
+- Jangan gunakan format JSON.
+Gunakan kalimat alami dan mudah dipahami.`
+            });
             const llmResp = await LLMService_1.LLMService.askDeepSeek({
                 messages: messages,
                 tools: llmTools
@@ -65,8 +82,16 @@ class WebhookServices {
                     console.log('🤖 DeepSeek follow-up reply:', followMsg.content);
                 }
             }
+            // const cleanedResponses = cleanLLMResponse(finalMessage)
+            // console.log(finalMessage)
             console.log('🤖 DeepSeek final reply:', finalMessage);
-            return finalMessage;
+            return finalMessage
+                .replace(/\\n/g, '\n')
+                .replace(/\\t/g, '\t')
+                .replace(/\\r/g, '')
+                .replace(/\*\*(.*?)\*\*/g, '$1')
+                .replace(/\*(.*?)\*/g, '$1')
+                .trim();
         }
         catch (error) {
             logs_1.default.error('WebhookServices.processWebhook', error);
