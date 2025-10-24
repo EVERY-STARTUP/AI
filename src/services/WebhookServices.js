@@ -9,6 +9,7 @@ const logs_1 = __importDefault(require("../logs"));
 const ServiceErrorHandler_1 = require("./ServiceErrorHandler");
 const LLMService_1 = require("./LLMService");
 const client_1 = require("../mcp/client");
+const cleanTextResponse_1 = require("./helpers/cleanTextResponse");
 class WebhookServices {
     static async processWebhook(data) {
         try {
@@ -82,16 +83,9 @@ Gunakan kalimat alami dan mudah dipahami.`
                     console.log('🤖 DeepSeek follow-up reply:', followMsg.content);
                 }
             }
-            // const cleanedResponses = cleanLLMResponse(finalMessage)
-            // console.log(finalMessage)
+            const cleanedResponses = (0, cleanTextResponse_1.cleanLLMResponse)(finalMessage);
             console.log('🤖 DeepSeek final reply:', finalMessage);
-            return finalMessage
-                .replace(/\\n/g, '\n')
-                .replace(/\\t/g, '\t')
-                .replace(/\\r/g, '')
-                .replace(/\*\*(.*?)\*\*/g, '$1')
-                .replace(/\*(.*?)\*/g, '$1')
-                .trim();
+            return cleanedResponses;
         }
         catch (error) {
             logs_1.default.error('WebhookServices.processWebhook', error);

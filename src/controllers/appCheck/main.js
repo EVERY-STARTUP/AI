@@ -7,7 +7,7 @@ const requestHandler_1 = require("../../utilities/requestHandler");
 const mainApp = async (req, res) => {
     try {
         const data = {
-            aboutMe: 'Welcome to SATUFLOW API',
+            aboutMe: 'Welcome to Whatsapp Bot',
             status: http_status_codes_1.StatusCodes.OK
         };
         const response = response_1.ResponseData.success({
