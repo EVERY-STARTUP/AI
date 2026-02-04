@@ -23,12 +23,16 @@ class PeriodicService {
         });
         return data;
     }
-    static async getAll({ pagination, queryPage, querySize }) {
+    static async getAll({ pagination, queryPage, querySize, search }) {
         const page = new pagination_1.Pagination(Number(queryPage) || 0, Number(querySize) || 10);
+        const whereClause = {
+            deleted: 0
+        };
+        if (search) {
+            whereClause[sequelize_1.Op.or] = [{ periodicName: { [sequelize_1.Op.like]: `%${search}%` } }];
+        }
         const result = await periodicModel_1.PeriodicModel.findAndCountAll({
-            where: {
-                deleted: 0
-            },
+            where: whereClause,
             order: [['periodicId', 'desc']],
             ...(pagination === true && {
                 limit: page.limit,

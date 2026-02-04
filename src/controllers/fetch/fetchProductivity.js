@@ -5,10 +5,12 @@ const http_status_codes_1 = require("http-status-codes");
 const ProductivityService_1 = require("../../services/ProductivityService");
 const fetchProductivity = async (req, res, next) => {
     try {
+        const { pagination = 'true', page = 0, size = 10, search = '' } = req.query;
         const result = await ProductivityService_1.ProductivityService.getAll({
-            pagination: req.query.pagination === 'true',
-            queryPage: req.query.queryPage + '' || '0',
-            querySize: req.query.querySize + '' || '10'
+            pagination: pagination === 'true',
+            queryPage: Number(page),
+            querySize: Number(size),
+            search: String(search).trim()
         });
         return res.status(http_status_codes_1.StatusCodes.OK).json(result);
     }

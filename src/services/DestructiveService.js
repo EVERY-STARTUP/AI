@@ -23,12 +23,22 @@ class DestructiveService {
         });
         return data;
     }
-    static async getAll({ pagination, queryPage, querySize }) {
+    static async getAll({ pagination, queryPage, querySize, search }) {
         const page = new pagination_1.Pagination(Number(queryPage) || 0, Number(querySize) || 10);
+        const whereClause = {
+            deleted: 0
+        };
+        if (search) {
+            whereClause[sequelize_1.Op.and] = sequelize_1.Sequelize.literal(`
+            JSON_SEARCH(
+              LOWER(JSON_UNQUOTE(JSON_EXTRACT(destructive_data, '$'))),
+              'all',
+              LOWER('%${search}%')
+            ) IS NOT NULL
+          `);
+        }
         const result = await destructiveModel_1.DestructiveModel.findAndCountAll({
-            where: {
-                deleted: 0
-            },
+            where: whereClause,
             order: [['destructiveId', 'desc']],
             ...(pagination === true && {
                 limit: page.limit,
