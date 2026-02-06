@@ -14,6 +14,7 @@ const registry_1 = __importDefault(require("./registry"));
 const routers = (0, express_1.Router)();
 routers.use('/api/v1/', registry_1.default.AppCheckRoutes);
 routers.use('/api/v1/', registry_1.default.FetchDataRoutes);
+routers.use('/api/v1/', registry_1.default.RemoveDataRoutes);
 routers.use('/api/v1/auth', registry_1.default.AuthRoutes);
 routers.use('/api/v1/webhooks', registry_1.default.WebhookRoutes);
 routers.use('/docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.default));
